@@ -14,37 +14,40 @@ final class HomeViewController: UIViewController {
 
     //MARK: - Constants
     private enum Constants {
-        //MARK: - Spacings
+        //MARK: - Constraints
         
-        static let historyButtonTopSpacing: CGFloat = 46
+        static let historyButtonTopSpacing: CGFloat = 100
+        static let historyButtonContentSpacing: CGFloat = 12
+        static let historyButtonHeightMultiplier: CGFloat = 40/103
         
         static let dailyQuizImageViewTopSpacing: CGFloat = 114
+        static let dailyQuizImageViewLeadingSpacing: CGFloat = 46
+        static let dailyQuizImageViewTrailingSpacing: CGFloat = 47
+        static let dailyQuizImageViewHeightMultipler: CGFloat = 67.67/300
         
         static let welcomeViewTopSpacing: CGFloat = 40
+        static let welcomeViewBottomSpacing: CGFloat = 268.33
         
         static let welcomeStackVerticalSpacing: CGFloat = 32
         static let welcomeStackHorizontalSpacing: CGFloat = 24
         static let welcomeStackContentSpacing: CGFloat = 40
         
-        static let historyButtonContentSpacing: CGFloat = 12
+        static let startButtonSpacingToStack: CGFloat = 16
+        static let startButtonHeightMultiplier: CGFloat = 50/280
         
         //MARK: - Values
         
         static let historyButtonCornedRadius: CGFloat = 24
         static let historyButtonTextSize: CGFloat = 12
-        static let historyButtonImageSize: CGFloat = 16
-        
-        static let dailyQuizImageViewSize: CGSize = CGSize(width: 300, height: 67.67)
         
         static let welcomeViewCornerRadius: CGFloat = 46
-        static let welcomeViewWidth: CGFloat = 360
+        static let welcomeViewLeadingSpacing: CGFloat = 16
+        static let welcomeViewTrailingSpacing: CGFloat = 17
         static let welcomeLabelFontSize: CGFloat = 28
         
         static let startButtonTextFontSize: CGFloat = 16
         static let startButtonCornerRadius: CGFloat = 16
-        static let startButtonSize: CGSize = CGSize(width: 280, height: 50)
-        
-        
+        static let startButtonSpacing: CGFloat = 16
     }
 
     //MARK: - UI Components
@@ -96,27 +99,30 @@ private extension HomeViewController {
         welcomeStack.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            historyButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.historyButtonTopSpacing),
+            historyButton.topAnchor.constraint(equalTo: view.topAnchor, constant: Constants.historyButtonTopSpacing),
             historyButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            historyButton.heightAnchor.constraint(equalTo: historyButton.widthAnchor, multiplier: Constants.historyButtonHeightMultiplier),
             
             dailyQuizImageView.topAnchor.constraint(equalTo: historyButton.bottomAnchor, constant: Constants.dailyQuizImageViewTopSpacing),
-            dailyQuizImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            dailyQuizImageView.widthAnchor.constraint(equalToConstant: Constants.dailyQuizImageViewSize.width),
-            dailyQuizImageView.heightAnchor.constraint(equalToConstant: Constants.dailyQuizImageViewSize.height),
+            dailyQuizImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.dailyQuizImageViewLeadingSpacing),
+            dailyQuizImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.dailyQuizImageViewTrailingSpacing),
+            dailyQuizImageView.heightAnchor.constraint(equalTo: dailyQuizImageView.widthAnchor, multiplier: Constants.dailyQuizImageViewHeightMultipler),
             
             
             welcomeView.topAnchor.constraint(equalTo: dailyQuizImageView.bottomAnchor, constant: Constants.welcomeViewTopSpacing),
-            welcomeView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            welcomeView.widthAnchor.constraint(equalToConstant: Constants.welcomeViewWidth),
+            welcomeView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.welcomeViewLeadingSpacing),
+            welcomeView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.welcomeViewTrailingSpacing),
+            welcomeView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -Constants.welcomeViewBottomSpacing),
+            
             
             welcomeStack.topAnchor.constraint(equalTo: welcomeView.topAnchor, constant: Constants.welcomeStackVerticalSpacing),
             welcomeStack.bottomAnchor.constraint(equalTo: welcomeView.bottomAnchor, constant: -Constants.welcomeStackVerticalSpacing),
             welcomeStack.leadingAnchor.constraint(equalTo: welcomeView.leadingAnchor, constant: Constants.welcomeStackHorizontalSpacing),
             welcomeStack.trailingAnchor.constraint(equalTo: welcomeView.trailingAnchor, constant: -Constants.welcomeStackHorizontalSpacing),
             
-            startButton.widthAnchor.constraint(equalToConstant: Constants.startButtonSize.width),
-            startButton.heightAnchor.constraint(equalToConstant: Constants.startButtonSize.height),
-            
+            startButton.leadingAnchor.constraint(equalTo: welcomeStack.leadingAnchor, constant: Constants.startButtonSpacingToStack),
+            startButton.trailingAnchor.constraint(equalTo: welcomeStack.trailingAnchor, constant: -Constants.startButtonSpacingToStack),
+            startButton.heightAnchor.constraint(equalTo: startButton.widthAnchor, multiplier: Constants.startButtonHeightMultiplier)
         ])
     }
     
@@ -143,6 +149,7 @@ private extension HomeViewController {
         welcomeStack.axis = .vertical
         welcomeStack.spacing = Constants.welcomeStackContentSpacing
         welcomeStack.alignment = .center
+        welcomeStack.distribution = .fill
     }
     
     func configureHistoryButton() {
@@ -159,10 +166,6 @@ private extension HomeViewController {
         )
         
         historyButtonConfig.background.cornerRadius = Constants.historyButtonCornedRadius
-        
-        historyButtonConfig.preferredSymbolConfigurationForImage = UIImage.SymbolConfiguration(
-            pointSize: Constants.historyButtonImageSize,
-        )
         
         historyButtonConfig.baseBackgroundColor = .white
         historyButtonConfig.baseForegroundColor = UIColor(named: "lilac")
