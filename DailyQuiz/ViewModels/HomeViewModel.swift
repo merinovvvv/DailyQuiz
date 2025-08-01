@@ -10,20 +10,13 @@ import Foundation
 final class HomeViewModel {
     
     //MARK: - Closures
+    
     var showLoading: (() -> Void)?
     var hideLoading: (() -> Void)?
     var showError: ((String) -> Void)?
     var navigateToQuiz: (([Task]) -> Void)?
     
-    //MARK: - Constants
-    
-    //MARK: - UI Components
-    
-    //MARK: - LifeCycle
-    
-    //MARK: - Setup UI
-    
-    //MARK: - Selectors
+    //MARK: - Methods
     
     func startQuiz() {
         showLoading?()

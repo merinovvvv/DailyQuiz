@@ -25,7 +25,6 @@ final class HomeViewController: UIViewController {
         static let dailyQuizImageViewHeightMultipler: CGFloat = 67.67/300
         
         static let welcomeViewTopSpacing: CGFloat = 40
-        static let welcomeViewBottomSpacing: CGFloat = 268.33
         
         static let welcomeStackVerticalSpacing: CGFloat = 32
         static let welcomeStackHorizontalSpacing: CGFloat = 24
@@ -142,13 +141,10 @@ private extension HomeViewController {
             dailyQuizImageView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.dailyQuizImageViewHorizontalSpacing),
             dailyQuizImageView.heightAnchor.constraint(equalTo: dailyQuizImageView.widthAnchor, multiplier: Constants.dailyQuizImageViewHeightMultipler),
             
-            
             welcomeView.topAnchor.constraint(equalTo: dailyQuizImageView.bottomAnchor, constant: Constants.welcomeViewTopSpacing),
             welcomeView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.welcomeViewHorizontalSpacing),
             welcomeView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.welcomeViewHorizontalSpacing),
-            welcomeView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -Constants.welcomeViewBottomSpacing),
-            
-            
+
             welcomeStack.topAnchor.constraint(equalTo: welcomeView.topAnchor, constant: Constants.welcomeStackVerticalSpacing),
             welcomeStack.bottomAnchor.constraint(equalTo: welcomeView.bottomAnchor, constant: -Constants.welcomeStackVerticalSpacing),
             welcomeStack.leadingAnchor.constraint(equalTo: welcomeView.leadingAnchor, constant: Constants.welcomeStackHorizontalSpacing),
