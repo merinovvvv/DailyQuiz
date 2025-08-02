@@ -55,14 +55,14 @@ final class HomeViewController: UIViewController {
     
     //MARK: - UI Components
     
-    private let historyButton: UIButton = UIButton()
+    private let historyButton: UIButton = UIButton(type: .system)
     private var historyButtonConfig: UIButton.Configuration = UIButton.Configuration.filled()
     
     private let dailyQuizImageView: UIImageView = UIImageView()
     
     private let welcomeView: UIView = UIView()
     private let welcomeLabel: UILabel = UILabel()
-    private let startButton: UIButton = UIButton()
+    private let startButton: UIButton = UIButton(type: .system)
     private let welcomeStack: UIStackView = UIStackView()
     
     private let activityIndicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .large)
@@ -179,6 +179,7 @@ private extension HomeViewController {
         startButton.layer.cornerRadius = Constants.startButtonCornerRadius
         startButton.backgroundColor = UIColor(named: "lilac")
         startButton.addTarget(self, action: #selector(startButtonTapped), for: .touchUpInside)
+        startButton.tintColor = .white
         
         welcomeStack.axis = .vertical
         welcomeStack.spacing = Constants.welcomeStackContentSpacing
