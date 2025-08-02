@@ -19,7 +19,6 @@ final class QuizViewModel {
     //MARK: - Closures
     
     var onQuestionChanged: (() -> Void)?
-    var onAnswerSelected: (() -> Void)?
     var onQuizCompleted: ((QuizResult) -> Void)?
     var onNextButtonStateChanged: ((Bool) -> Void)?
     
@@ -28,7 +27,7 @@ final class QuizViewModel {
     var totalQuestions: Int {
         return tasks.count
     }
-    
+
     var currentQuestion: Task? {
         guard currentQuestionIndex < tasks.count else { return nil }
         return tasks[currentQuestionIndex]
@@ -52,12 +51,7 @@ final class QuizViewModel {
         self.tasks = tasks
     }
     
-    //MARK: - Public Methods
-    
-    func configure(with tasks: [Task]) {
-        self.tasks = tasks
-        reset()
-    }
+    //MARK: - Methods
     
     func selectAnswer(_ answer: String) {
         guard let currentTask = currentQuestion else { return }
@@ -75,21 +69,19 @@ final class QuizViewModel {
             userAnswers.append(userAnswer)
         }
         
-        onAnswerSelected?()
         onNextButtonStateChanged?(canProceedToNext())
     }
     
-    func goToNextQuestion() -> Bool {
+    func goToNextQuestion() {
         guard currentQuestionIndex < tasks.count - 1 else {
             isQuizCompleted = true
             onQuizCompleted?(getQuizResults())
-            return false
+            return
         }
         
         currentQuestionIndex += 1
         onQuestionChanged?()
         onNextButtonStateChanged?(canProceedToNext())
-        return true
     }
     
     func canProceedToNext() -> Bool {

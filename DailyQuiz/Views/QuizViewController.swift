@@ -11,15 +11,9 @@ final class QuizViewController: UIViewController, UIGestureRecognizerDelegate {
     
     //MARK: - Variables
     
-    private let viewModel: QuizViewModel = QuizViewModel()
-    
-    private var tasks: [Task]
-    private var questionIndex: Int = 0
+    private let viewModel: QuizViewModel
     
     private var selectedAnswerIndex: Int?
-    private var selectedAnswer: String?
-    
-    private var userAnswers: [String] = []
     
     //MARK: - Constants
     
@@ -91,6 +85,7 @@ final class QuizViewController: UIViewController, UIGestureRecognizerDelegate {
         super.viewDidLoad()
         view.backgroundColor = UIColor(named: "lilac")
         navigationController?.interactivePopGestureRecognizer?.delegate = self
+        setupBindings()
         setupUI()
         loadCurrentQuestion()
     }
@@ -107,7 +102,7 @@ final class QuizViewController: UIViewController, UIGestureRecognizerDelegate {
     //MARK: - Init
     
     init(tasks: [Task]) {
-        self.tasks = tasks
+        viewModel = QuizViewModel(tasks: tasks)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -117,20 +112,37 @@ final class QuizViewController: UIViewController, UIGestureRecognizerDelegate {
     
     //MARK: - Private Methods
     
+    private func setupBindings() {
+        viewModel.onQuestionChanged = { [weak self] in
+            DispatchQueue.main.async {
+                self?.loadCurrentQuestion()
+            }
+        }
+        
+        
+        viewModel.onQuizCompleted = { [weak self] result in
+            DispatchQueue.main.async {
+                self?.handleQuizCompletion(result: result)
+            }
+        }
+        
+        viewModel.onNextButtonStateChanged = { [weak self] canProceed in
+            DispatchQueue.main.async {
+                self?.updateNextButtonState(enabled: canProceed)
+            }
+        }
+    }
+    
     private func loadCurrentQuestion() {
-        guard questionIndex < tasks.count else { return }
-        
-        let currentTask = tasks[questionIndex]
-        
-        questionLabel.text = currentTask.question
-        questionNumberLabel.text = "Вопрос \(questionIndex + 1) из \(tasks.count)"
+        questionLabel.text = viewModel.currentQuestion?.question
+        questionNumberLabel.text = viewModel.progressText
         
         clearAnswerButtons()
-        
-        createAnswerButtons(for: currentTask)
-        
         selectedAnswerIndex = nil
-        updateNextButtonState()
+        
+        createAnswerButtons()
+        updateNextButtonState(enabled: false)
+        
     }
     
     private func clearAnswerButtons() {
@@ -141,16 +153,14 @@ final class QuizViewController: UIViewController, UIGestureRecognizerDelegate {
         answerButtons.removeAll()
     }
     
-    private func createAnswerButtons(for task: Task) {
-        var allAnswers = task.incorrectAnswers
-        allAnswers.append(task.correctAnswer)
-        allAnswers.shuffle()
+    private func createAnswerButtons() {
+        let answers = viewModel.currentQuestionAnswers
         
-        for (index, answer) in allAnswers.enumerated() {
+        for (index, answer) in answers.enumerated() {
             let radioButton = RadioButtonView(title: answer)
             
-            radioButton.onSelect = { [weak self] in
-                self?.selectAnswer(at: index, selectedAnswer: answer)
+            radioButton.onTap = { [weak self] in
+                self?.selectAnswer(at: index, answer: answer)
             }
             
             answerButtons.append(radioButton)
@@ -158,40 +168,26 @@ final class QuizViewController: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    private func selectAnswer(at index: Int, selectedAnswer: String) {
+    private func selectAnswer(at index: Int, answer: String) {
         
         selectedAnswerIndex = index
         
-        answerButtons.forEach { $0.isSelectedOption = false }
+        for (buttonIndex, button) in answerButtons.enumerated() {
+            let shouldBeSelected = (buttonIndex == index)
+            button.viewModel.setSelected(shouldBeSelected)
+        }
         
-        answerButtons[index].isSelectedOption = true
-        self.selectedAnswer = selectedAnswer
-        
-        updateNextButtonState()
+        viewModel.selectAnswer(answer)
     }
     
-    private func updateNextButtonState() {
-        if selectedAnswerIndex != nil {
-            nextButton.backgroundColor = UIColor(named: "lilac")
-            nextButton.isEnabled = true
-        } else {
-            nextButton.backgroundColor = UIColor(named: "disabledColor")
-            nextButton.isEnabled = false
-        }
+    private func updateNextButtonState(enabled: Bool) {
+        nextButton.isEnabled = enabled
+        nextButton.backgroundColor = enabled ? UIColor(named: "lilac") : UIColor(named: "disabledColor")
     }
     
-    //TODO: GO TO NEXT QUESTION
-    
-    private func goToNextQuestion() {
-        guard selectedAnswerIndex != nil else { return }
-        
-        questionIndex += 1
-        
-        if questionIndex < tasks.count {
-            loadCurrentQuestion()
-        } else {
-            print("Quiz completed!")
-        }
+    private func handleQuizCompletion(result: QuizResult) {
+        // TODO: Navigate to results screen
+        print("Quiz completed! Score: \(result.scoreText)")
     }
 }
 
@@ -307,6 +303,7 @@ private extension QuizViewController {
         nextButton.backgroundColor = UIColor(named: "disabledColor")
         nextButton.tintColor = .white
         nextButton.layer.cornerRadius = Constants.nextButtonCornerRadius
+        nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         
         warningLabel.text = "Вернуться к предыдущим вопросам нельзя"
         warningLabel.font = UIFont.systemFont(ofSize: Constants.warningLabelFontSize, weight: .regular)
@@ -319,5 +316,13 @@ private extension QuizViewController {
 private extension QuizViewController {
     @objc func goBack() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func nextButtonTapped() {
+        guard selectedAnswerIndex != nil else { return }
+        
+        selectedAnswerIndex = nil
+        
+        viewModel.goToNextQuestion()
     }
 }

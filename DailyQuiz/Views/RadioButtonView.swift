@@ -10,21 +10,16 @@ import UIKit
 final class RadioButtonView: UIView {
     
     //MARK: - Variables
-    //private let viewModel: RadioButtonViewModel = RadioButtonViewModel()
+    var viewModel: RadioButtonViewModel
     
-    var isSelectedOption: Bool = false {
-        didSet {
-            updateAppearance()
-        }
-    }
-    
-    //MARK: - Closures
-    var onSelect: (() -> Void)?
+    var onTap: (() -> Void)?
     
     //MARK: - Init
     init(title: String) {
+        self.viewModel = RadioButtonViewModel(title: title)
         super.init(frame: .zero)
-        setupUI(title: title)
+        setupBindings()
+        setupUI()
     }
     
     required init?(coder: NSCoder) {
@@ -72,36 +67,32 @@ final class RadioButtonView: UIView {
     
     //MARK: - Methods
     
-    private func updateAppearance() {
-        if isSelectedOption {
-            radioButton.backgroundColor = UIColor(named: "selectedColor")
-            radioButton.layer.borderColor = UIColor(named: "selectedColor")?.cgColor
-            radioButton.setImage(UIImage(named: "selectedAnswerIcon"), for: .normal)
-            radioButton.tintColor = .white
-            
-            self.layer.borderWidth = Constants.selectedViewBorderWidth
-            self.layer.borderColor = UIColor(named: "selectedColor")?.cgColor
-        } else {
-            
-            radioButton.backgroundColor = .clear
-            radioButton.layer.borderColor = UIColor.black.cgColor
-                        
-            radioButton.setImage(nil, for: .normal)
-            radioButton.addTarget(self, action: #selector(viewTapped), for: .touchUpInside)
-                        
-            self.layer.borderWidth = 0
-            self.layer.borderColor = UIColor.clear.cgColor
-            
+    private func setupBindings() {
+        viewModel.onSelectionChanged = { [weak self] isSelected in
+            DispatchQueue.main.async {
+                self?.updateAppearance()
+            }
         }
+    }
+    
+    private func updateAppearance() {
+        radioButton.backgroundColor = viewModel.getBackgroundColor()
+        radioButton.layer.borderColor = viewModel.getBorderColor()
+        radioButton.setImage(viewModel.getImage(), for: .normal)
+        radioButton.tintColor = viewModel.getTintColor()
+        
+        self.layer.borderWidth = viewModel.getViewBorderWidth()
+        self.layer.borderColor = viewModel.getViewBorderColor()
     }
 }
 
 //MARK: - Setup UI
 private extension RadioButtonView {
-    func setupUI(title: String) {
+    func setupUI() {
         setupViewHierarchy()
         setupConstraints()
-        configureViews(title: title)
+        configureViews()
+        updateAppearance()
     }
     
     func setupViewHierarchy() {
@@ -126,11 +117,11 @@ private extension RadioButtonView {
         ])
     }
     
-    func configureViews(title: String) {
+    func configureViews() {
         self.layer.cornerRadius = Constants.viewCornerRadius
         self.backgroundColor = UIColor(named: "answerViewColor")
         
-        titleLabel.text = title
+        titleLabel.text = viewModel.title
         titleLabel.textColor = .black
         titleLabel.font = UIFont.systemFont(ofSize: Constants.titleLabelFontSize, weight: .regular)
         titleLabel.numberOfLines = .zero
@@ -140,12 +131,14 @@ private extension RadioButtonView {
         
         tapGesture.addTarget(self, action: #selector(viewTapped))
         addGestureRecognizer(tapGesture)
+        
+        radioButton.addTarget(self, action: #selector(viewTapped), for: .touchUpInside)
     }
 }
 
 //MARK: - Selectors
 private extension RadioButtonView {
     @objc private func viewTapped() {
-        onSelect?()
+        onTap?()
     }
 }

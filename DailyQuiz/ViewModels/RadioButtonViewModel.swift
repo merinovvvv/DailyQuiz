@@ -14,25 +14,19 @@ final class RadioButtonViewModel {
     private(set) var title: String
     private(set) var isSelected: Bool = false
     
-    //MARK: - Constants
-    
-    private enum Constants {
-        static let radioButtonBorderWidth: CGFloat = 1
-    }
-    
     //MARK: - Closures
     
     var onSelectionChanged: ((Bool) -> Void)?
     
-    //MARK: - Init
+    //MARK: - Constants
     
-    init(title: String) {
-        self.title = title
+    private enum Constants {
+        static let viewBorderWidth: CGFloat = 1
     }
     
-    //MARK: - Public Methods
+    //MARK: - Init
     
-    func configure(with title: String) {
+    init(title: String = "") {
         self.title = title
     }
     
@@ -68,7 +62,7 @@ final class RadioButtonViewModel {
     }
     
     func getViewBorderWidth() -> CGFloat {
-        return isSelected ? Constants.radioButtonBorderWidth : .zero
+        return isSelected ? Constants.viewBorderWidth : .zero
     }
     
     func getViewBorderColor() -> CGColor? {
