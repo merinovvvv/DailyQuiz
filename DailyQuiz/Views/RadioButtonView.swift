@@ -42,7 +42,7 @@ final class RadioButtonView: UIView {
         
         static let titleLabelVerticalSpacing: CGFloat = 18
         static let titleLabelLeadingSpacing: CGFloat = 16
-        static let titleLabelTrailingSpacing: CGFloat = 185
+        static let titleLabelTrailingSpacing: CGFloat = 16
         
         
         //MARK: - Values
@@ -114,6 +114,7 @@ private extension RadioButtonView {
             
             titleLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor),
             titleLabel.leadingAnchor.constraint(equalTo: radioButton.trailingAnchor, constant: Constants.titleLabelLeadingSpacing),
+            titleLabel.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -Constants.titleLabelTrailingSpacing)
         ])
     }
     

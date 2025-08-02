@@ -61,6 +61,8 @@ final class QuizViewController: UIViewController, UIGestureRecognizerDelegate {
         static let nextButtonTextSize: CGFloat = 16
         
         static let warningLabelFontSize: CGFloat = 10
+        
+        static let one: CGFloat = 1
     }
     
     //MARK: - UI Components
@@ -93,7 +95,19 @@ final class QuizViewController: UIViewController, UIGestureRecognizerDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: true)
+        
+        questionView.isHidden = false
+        questionView.alpha = .zero
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        UIView.animate(withDuration: 0.4, delay: 0.1, options: .curveEaseOut) {
+            self.questionView.alpha = Constants.one
+        }
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: true)
@@ -115,7 +129,19 @@ final class QuizViewController: UIViewController, UIGestureRecognizerDelegate {
     private func setupBindings() {
         viewModel.onQuestionChanged = { [weak self] in
             DispatchQueue.main.async {
-                self?.loadCurrentQuestion()
+                
+                UIView.animate(withDuration: 0.3, animations: {
+                    self?.questionView.alpha = .zero
+                    self?.warningLabel.alpha = .zero
+                }, completion: { _ in
+                    
+                    self?.loadCurrentQuestion()
+                    
+                    UIView.animate(withDuration: 0.3) {
+                        self?.questionView.alpha = Constants.one
+                        self?.warningLabel.alpha = Constants.one
+                    }
+                })
             }
         }
         
@@ -134,6 +160,7 @@ final class QuizViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     private func loadCurrentQuestion() {
+        
         questionLabel.text = viewModel.currentQuestion?.question
         questionNumberLabel.text = viewModel.progressText
         
@@ -186,8 +213,7 @@ final class QuizViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     private func handleQuizCompletion(result: QuizResult) {
-        // TODO: Navigate to results screen
-        print("Quiz completed! Score: \(result.scoreText)")
+        
     }
 }
 
@@ -304,6 +330,7 @@ private extension QuizViewController {
         nextButton.tintColor = .white
         nextButton.layer.cornerRadius = Constants.nextButtonCornerRadius
         nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
+        nextButton.addTarget(self, action: #selector(checkForFinish(sender: )), for: .touchUpInside)
         
         warningLabel.text = "Вернуться к предыдущим вопросам нельзя"
         warningLabel.font = UIFont.systemFont(ofSize: Constants.warningLabelFontSize, weight: .regular)
@@ -324,5 +351,11 @@ private extension QuizViewController {
         selectedAnswerIndex = nil
         
         viewModel.goToNextQuestion()
+    }
+    
+    @objc func checkForFinish(sender: UIButton) {
+        if viewModel.currentQuestionIndex + 1 == viewModel.totalQuestions {
+            sender.setTitle("завершить".uppercased(), for: .normal)
+        }
     }
 }
