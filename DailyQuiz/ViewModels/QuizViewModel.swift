@@ -91,12 +91,10 @@ final class QuizViewModel {
     func getQuizResults() -> QuizResult {
         let correctAnswers = userAnswers.filter { $0.isCorrect }.count
         let totalQuestions = userAnswers.count
-        let percentage = totalQuestions > 0 ? Double(correctAnswers) / Double(totalQuestions) * 100 : 0
         
         return QuizResult(
             totalQuestions: totalQuestions,
             correctAnswers: correctAnswers,
-            percentage: percentage,
             userAnswers: userAnswers
         )
     }

@@ -26,7 +26,6 @@ final class NetworkManager {
     }
     
     func fetchQuizData(completion: @escaping (Result<[Task], Error>) -> Void) {
-        //TODO: get rid of MOCK
         guard let url = createURL(with: "https://opentdb.com/api.php?amount=5") else {
             completion(.failure(NetworkError.badURL))
             return

@@ -213,7 +213,8 @@ final class QuizViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     private func handleQuizCompletion(result: QuizResult) {
-        
+        let resultsVC = QuizResultsViewController(result: result)
+        navigationController?.pushViewController(resultsVC, animated: true)
     }
 }
 
