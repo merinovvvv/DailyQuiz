@@ -273,9 +273,6 @@ private extension HomeViewController {
                     }
                 }
             }
-            
-            
-            //self?.hideLoadingIndicator()
         }
         
         viewModel.showError = { [weak self] message in
@@ -287,26 +284,6 @@ private extension HomeViewController {
             self?.navigationController?.pushViewController(quizVC, animated: true)
         }
     }
-    
-//    private func hideLoadingIndicator() {
-//        activityIndicator.stopAnimating()
-//        activityIndicator.isHidden = true
-//        
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-//            guard let strongSelf = self else { return }
-//            
-//            strongSelf.welcomeView.alpha = 0
-//            strongSelf.welcomeView.isHidden = false
-//            
-//            strongSelf.historyButton.alpha = 0
-//            strongSelf.historyButton.isHidden = false
-//            
-//            UIView.animate(withDuration: 0.3) {
-//                strongSelf.welcomeView.alpha = 1
-//                strongSelf.historyButton.alpha = 1
-//            }
-//        }
-//    }
     
     private func showErrorLabel() {
         if !view.contains(errorLabel) {

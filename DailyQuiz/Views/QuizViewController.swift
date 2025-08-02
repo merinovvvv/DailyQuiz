@@ -12,11 +12,13 @@ final class QuizViewController: UIViewController, UIGestureRecognizerDelegate {
     //MARK: - Variables
     
     private let viewModel: QuizViewModel = QuizViewModel()
+    
     private var tasks: [Task]
     private var questionIndex: Int = 0
     
     private var selectedAnswerIndex: Int?
     private var selectedAnswer: String?
+    
     private var userAnswers: [String] = []
     
     //MARK: - Constants
@@ -178,6 +180,8 @@ final class QuizViewController: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
+    //TODO: GO TO NEXT QUESTION
+    
     private func goToNextQuestion() {
         guard selectedAnswerIndex != nil else { return }
         
@@ -284,12 +288,10 @@ private extension QuizViewController {
         questionView.layer.cornerRadius = Constants.questionViewCornerRadius
         questionView.backgroundColor = .white
         
-        questionNumberLabel.text = "Вопрос \(questionIndex + 1) из \(tasks.count)"
         questionNumberLabel.font = UIFont.systemFont(ofSize: Constants.questionNumberLabelFontSize, weight: .bold)
         questionNumberLabel.textColor = UIColor(named: "lightLilac")
         questionNumberLabel.textAlignment = .center
         
-        questionLabel.text = tasks[questionIndex].question
         questionLabel.numberOfLines = .zero
         questionLabel.font = UIFont.systemFont(ofSize: Constants.questionLabelFontSize, weight: .semibold)
         questionLabel.textColor = .black

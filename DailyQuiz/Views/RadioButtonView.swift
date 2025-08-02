@@ -10,7 +10,7 @@ import UIKit
 final class RadioButtonView: UIView {
     
     //MARK: - Variables
-    private let viewModel: RadioButtonViewModel = RadioButtonViewModel()
+    //private let viewModel: RadioButtonViewModel = RadioButtonViewModel()
     
     var isSelectedOption: Bool = false {
         didSet {
