@@ -72,6 +72,12 @@ class HistoryViewController: UIViewController {
     
     private let backButton: UIButton = UIButton(type: .system)
     
+    private let deleteView: UIView = UIView()
+    private let deleteTitle: UILabel = UILabel()
+    private let deleteSubtitle: UILabel = UILabel()
+    private let okButton: UIButton = UIButton()
+    
+    
     //MARK: - Init
     
     init(viewModel: HistoryViewModel) {
@@ -138,6 +144,14 @@ class HistoryViewController: UIViewController {
             DispatchQueue.main.async {
                 self.updateScrollability()
             }
+        }
+    }
+    
+    private func deleteHistoryItem(at indexPath: IndexPath) {
+        let success = viewModel.deleteHistoryItem(at: indexPath.row)
+        
+        if success {
+            tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
     
@@ -290,6 +304,20 @@ extension HistoryViewController: UITableViewDelegate, UITableViewDataSource {
         
         
         return UITableViewCell()
+    }
+    
+    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
+            let deleteAction = UIAction(
+                title: "Удалить",
+                image: UIImage(systemName: "trash"),
+                attributes: .destructive
+            ) { [weak self] _ in
+                self?.deleteHistoryItem(at: indexPath)
+            }
+            
+            return UIMenu(title: "", children: [deleteAction])
+        }
     }
 }
 

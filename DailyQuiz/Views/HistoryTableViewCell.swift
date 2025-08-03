@@ -69,6 +69,9 @@ class HistoryTableViewCell: UITableViewCell {
     
     //MARK: - Methods
     
+    override func setHighlighted(_ highlighted: Bool, animated: Bool) { }
+    override func setSelected(_ highlighted: Bool, animated: Bool) { }
+    
     func configure(
         title: String,
         date: String,
