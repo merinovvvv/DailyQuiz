@@ -9,8 +9,6 @@ import Foundation
 
 final class QuizHistoryManager: QuizHistoryManagerProtocol {
     
-    //TODO: get rid of prints
-    
     //MARK: - Properties
     
     private let userDefaults: UserDefaults = UserDefaults.standard

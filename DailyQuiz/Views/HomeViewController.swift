@@ -221,6 +221,7 @@ private extension HomeViewController {
         }
         
         historyButton.configuration = historyButtonConfig
+        historyButton.addTarget(self, action: #selector(showHistory), for: .touchUpInside)
     }
 }
 
@@ -318,5 +319,10 @@ private extension HomeViewController {
             errorLabel.isHidden = true
         }
         viewModel.startQuiz()
+    }
+    
+    @objc func showHistory() {
+        let historyVC = HistoryViewController(viewModel: HistoryViewModel())
+        navigationController?.pushViewController(historyVC, animated: true)
     }
 }
