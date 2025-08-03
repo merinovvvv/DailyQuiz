@@ -4,6 +4,7 @@ final class QuizResultsViewModel {
     
     // MARK: - Variables
     private let result: QuizResult
+    private let historyManager: QuizHistoryManagerProtocol
     
     // MARK: - Closures
     var navigateToHome: (() -> Void)?
@@ -28,8 +29,11 @@ final class QuizResultsViewModel {
     ]
     
     // MARK: - Init
-    init(result: QuizResult) {
+    init(result: QuizResult, historyManager: QuizHistoryManagerProtocol = QuizHistoryManager()) {
         self.result = result
+        self.historyManager = historyManager
+        
+        saveResultToHistory()
     }
     
     // MARK: - Methods
@@ -62,5 +66,9 @@ final class QuizResultsViewModel {
     
     func restartQuiz() {
         navigateToHome?()
+    }
+    
+    private func saveResultToHistory() {
+        historyManager.addQuizResult(result)
     }
 }
