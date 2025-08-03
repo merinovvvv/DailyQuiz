@@ -42,6 +42,18 @@ class HistoryViewController: UIViewController {
         static let backButtonLeadingSpacing: CGFloat = 26
         static let backButtonSize: CGFloat = 24
         
+        static let deleteViewHorizontalSpacing: CGFloat = 16
+        
+        static let deleteTitleTopSpacing: CGFloat = 32
+        
+        static let deleteSubtitleTopSpacing: CGFloat = 12
+        static let deleteSubtitleHorizontalSpacing: CGFloat = 24
+        
+        static let okButtonTopSpacing: CGFloat = 40
+        static let okButtonHorizontalSpacing: CGFloat = 40
+        static let okButtonBottomSpacing: CGFloat = 32
+        static let okButtonHeightMultiplier: CGFloat = 50/280
+        
         
         //MARK: - Values
         
@@ -55,6 +67,15 @@ class HistoryViewController: UIViewController {
         static let startButtonCornerRadius: CGFloat = 16
         
         static let one: CGFloat = 1
+        
+        static let deleteViewCornerRadius: CGFloat = 46
+        
+        static let deleteTitleFontSize: CGFloat = 24
+        
+        static let deleteSubtitleFontSize: CGFloat = 16
+        
+        static let okButtonCornerRadius: CGFloat = 16
+        static let okButtonTextFontSize: CGFloat = 16
         
     }
     
@@ -75,7 +96,9 @@ class HistoryViewController: UIViewController {
     private let deleteView: UIView = UIView()
     private let deleteTitle: UILabel = UILabel()
     private let deleteSubtitle: UILabel = UILabel()
-    private let okButton: UIButton = UIButton()
+    private let okButton: UIButton = UIButton(type: .system)
+    
+    private let dimmingView: UIView = UIView()
     
     
     //MARK: - Init
@@ -152,6 +175,14 @@ class HistoryViewController: UIViewController {
         
         if success {
             tableView.deleteRows(at: [indexPath], with: .fade)
+            deleteView.alpha = .zero
+            deleteView.isHidden = false
+            dimmingView.isHidden = false
+           
+            UIView.animate(withDuration: 0.3) {
+                self.dimmingView.alpha = 0.3
+                self.deleteView.alpha = Constants.one
+            }
         }
     }
     
@@ -188,6 +219,13 @@ private extension HistoryViewController {
         view.addSubview(tableView)
         view.addSubview(dailyQuizImageView)
         view.addSubview(backButton)
+        
+        view.addSubview(dimmingView)
+        view.addSubview(deleteView)
+        
+        deleteView.addSubview(deleteTitle)
+        deleteView.addSubview(deleteSubtitle)
+        deleteView.addSubview(okButton)
     }
     
     func setupConstraints() {
@@ -198,8 +236,19 @@ private extension HistoryViewController {
         startQuizButton.translatesAutoresizingMaskIntoConstraints = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
         dailyQuizImageView.translatesAutoresizingMaskIntoConstraints = false
+        deleteView.translatesAutoresizingMaskIntoConstraints = false
+        deleteTitle.translatesAutoresizingMaskIntoConstraints = false
+        deleteSubtitle.translatesAutoresizingMaskIntoConstraints = false
+        okButton.translatesAutoresizingMaskIntoConstraints = false
+        dimmingView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
+            
+            dimmingView.topAnchor.constraint(equalTo: view.topAnchor),
+            dimmingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            dimmingView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            dimmingView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.titleLabelTopSpacing),
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             
@@ -232,6 +281,23 @@ private extension HistoryViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.tableViewHorizontalSpacing),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.tableViewHorizontalSpacing),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
+            deleteView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            deleteView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: Constants.deleteViewHorizontalSpacing),
+            deleteView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -Constants.deleteViewHorizontalSpacing),
+            
+            deleteTitle.topAnchor.constraint(equalTo: deleteView.topAnchor, constant: Constants.deleteTitleTopSpacing),
+            deleteTitle.centerXAnchor.constraint(equalTo: deleteView.centerXAnchor),
+            
+            deleteSubtitle.topAnchor.constraint(equalTo: deleteTitle.bottomAnchor, constant: Constants.deleteSubtitleTopSpacing),
+            deleteSubtitle.leadingAnchor.constraint(equalTo: deleteView.leadingAnchor, constant: Constants.deleteSubtitleHorizontalSpacing),
+            deleteSubtitle.trailingAnchor.constraint(equalTo: deleteView.trailingAnchor, constant: -Constants.deleteSubtitleHorizontalSpacing),
+            
+            okButton.topAnchor.constraint(equalTo: deleteSubtitle.bottomAnchor, constant: Constants.okButtonTopSpacing),
+            okButton.leadingAnchor.constraint(equalTo: deleteView.leadingAnchor, constant: Constants.okButtonHorizontalSpacing),
+            okButton.trailingAnchor.constraint(equalTo: deleteView.trailingAnchor, constant: -Constants.okButtonHorizontalSpacing),
+            okButton.bottomAnchor.constraint(equalTo: deleteView.bottomAnchor, constant: -Constants.okButtonBottomSpacing),
+            okButton.heightAnchor.constraint(equalTo: okButton.widthAnchor, multiplier: Constants.okButtonHeightMultiplier)
         ])
     }
     
@@ -275,6 +341,33 @@ private extension HistoryViewController {
         
         dailyQuizImageView.image = UIImage(named: "dailyQuizLogo")
         dailyQuizImageView.contentMode = .scaleAspectFit
+        
+        deleteView.isHidden = true
+        deleteView.backgroundColor = .white
+        deleteView.layer.cornerRadius = Constants.deleteViewCornerRadius
+        
+        deleteTitle.text = "Попытка удалена"
+        deleteTitle.font = UIFont.systemFont(ofSize: Constants.deleteTitleFontSize, weight: .bold)
+        deleteTitle.textColor = .black
+        deleteTitle.textAlignment = .center
+        
+        deleteSubtitle.text = "Вы можете пройти викторину снова, \nкогда будете готовы."
+        deleteSubtitle.font = UIFont.systemFont(ofSize: Constants.deleteSubtitleFontSize, weight: .regular)
+        deleteSubtitle.numberOfLines = .zero
+        deleteSubtitle.textAlignment = .center
+        deleteSubtitle.textColor = .black
+        
+        okButton.setTitle("хорошо".uppercased(), for: .normal)
+        okButton.layer.cornerRadius = Constants.okButtonCornerRadius
+        okButton.titleLabel?.font = UIFont.systemFont(ofSize: Constants.okButtonTextFontSize, weight: .black)
+        okButton.tintColor = .white
+        okButton.addTarget(self, action: #selector(okButtonIsTapped), for: .touchUpInside)
+        okButton.backgroundColor = UIColor(named: "lilac")
+        
+        dimmingView.backgroundColor = .black
+        dimmingView.alpha = 0
+        dimmingView.isHidden = true
+        dimmingView.isUserInteractionEnabled = false
     }
 }
 
@@ -325,6 +418,18 @@ extension HistoryViewController: UITableViewDelegate, UITableViewDataSource {
 private extension HistoryViewController {
     @objc func startButtonTapped() {
         viewModel.startNewQuiz()
+    }
+    
+    @objc func okButtonIsTapped() {
+        
+        UIView.animate(withDuration: 0.3, animations: { [weak self] in
+            self?.deleteView.alpha = .zero
+            self?.dimmingView.alpha = .zero
+        }, completion: { [weak self] finished in
+            guard finished, let self else { return }
+            self.deleteView.isHidden = true
+            self.dimmingView.isHidden = true
+        })
     }
 }
 
