@@ -135,10 +135,11 @@ class HistoryViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        UIView.animate(withDuration: 0.4, delay: 0.1, options: .curveEaseOut) {
-            self.emptyStateView.alpha = Constants.one
-            self.tableView.alpha = Constants.one
-        } completion: { _ in
+        UIView.animate(withDuration: 0.4, delay: 0.1, options: .curveEaseOut) { [weak self] in
+            self?.emptyStateView.alpha = Constants.one
+            self?.tableView.alpha = Constants.one
+        } completion: { [weak self] _ in
+            guard let self else { return }
             self.updateScrollability()
         }
     }
@@ -179,9 +180,9 @@ class HistoryViewController: UIViewController {
             deleteView.isHidden = false
             dimmingView.isHidden = false
            
-            UIView.animate(withDuration: 0.3) {
-                self.dimmingView.alpha = 0.3
-                self.deleteView.alpha = Constants.one
+            UIView.animate(withDuration: 0.3) { [weak self] in
+                self?.dimmingView.alpha = 0.3
+                self?.deleteView.alpha = Constants.one
             }
         }
     }

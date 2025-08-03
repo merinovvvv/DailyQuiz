@@ -95,9 +95,9 @@ final class HomeViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        UIView.animate(withDuration: 0.4, delay: 0.1, options: .curveEaseOut) {
-            self.welcomeView.alpha = Constants.one
-            self.historyButton.alpha = Constants.one
+        UIView.animate(withDuration: 0.4, delay: 0.1, options: .curveEaseOut) { [weak self] in
+            self?.welcomeView.alpha = Constants.one
+            self?.historyButton.alpha = Constants.one
         }
     }
 }

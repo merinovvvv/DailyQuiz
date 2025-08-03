@@ -103,8 +103,8 @@ final class QuizViewController: UIViewController, UIGestureRecognizerDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        UIView.animate(withDuration: 0.4, delay: 0.1, options: .curveEaseOut) {
-            self.questionView.alpha = Constants.one
+        UIView.animate(withDuration: 0.4, delay: 0.1, options: .curveEaseOut) { [weak self] in
+            self?.questionView.alpha = Constants.one
         }
     }
     
