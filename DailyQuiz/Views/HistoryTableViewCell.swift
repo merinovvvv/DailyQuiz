@@ -7,11 +7,13 @@
 
 import UIKit
 
-class HistoryTableViewCell: UITableViewCell {
+final class HistoryTableViewCell: UITableViewCell {
     
     //MARK: - Properties
     
     static let identifier: String = "HistoryTableViewCell"
+    
+    var deleteAction: (() -> Void)?
     
     //MARK: - Constants
     
@@ -51,7 +53,7 @@ class HistoryTableViewCell: UITableViewCell {
     private let titleStackView: UIStackView = UIStackView()
     private let titleLabel: UILabel = UILabel()
     private let starsStackView: UIStackView = UIStackView()
-
+    
     private let dateStackView: UIStackView = UIStackView()
     private let dateLabel: UILabel = UILabel()
     private let timeLabel: UILabel = UILabel()
@@ -199,6 +201,18 @@ private extension HistoryTableViewCell {
         timeLabel.textColor = .black
         timeLabel.font = UIFont.systemFont(ofSize: Constants.timeLabelFontSize, weight: .regular)
         
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        contentView.addGestureRecognizer(tapGesture)
         
+        
+    }
+}
+
+//MARK: - Selectors
+
+private extension HistoryTableViewCell {
+    
+    @objc func handleTap() {
+        deleteAction?()
     }
 }

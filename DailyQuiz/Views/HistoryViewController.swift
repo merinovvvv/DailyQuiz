@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HistoryViewController: UIViewController {
+final class HistoryViewController: UIViewController {
     
     //MARK: - Variables
     private let viewModel: HistoryViewModel
@@ -179,7 +179,7 @@ class HistoryViewController: UIViewController {
             deleteView.alpha = .zero
             deleteView.isHidden = false
             dimmingView.isHidden = false
-           
+            
             UIView.animate(withDuration: 0.3) { [weak self] in
                 self?.dimmingView.alpha = 0.3
                 self?.deleteView.alpha = Constants.one
@@ -393,6 +393,10 @@ extension HistoryViewController: UITableViewDelegate, UITableViewDataSource {
                 totalQuestions: historyItem.totalQuestions
             )
             
+            cell.deleteAction = { [weak self] in
+                self?.showDeleteMenu(for: indexPath)
+            }
+            
             return cell
         }
         
@@ -400,18 +404,27 @@ extension HistoryViewController: UITableViewDelegate, UITableViewDataSource {
         return UITableViewCell()
     }
     
-    func tableView(_ tableView: UITableView, contextMenuConfigurationForRowAt indexPath: IndexPath, point: CGPoint) -> UIContextMenuConfiguration? {
-        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in
-            let deleteAction = UIAction(
-                title: "Удалить",
-                image: UIImage(systemName: "trash"),
-                attributes: .destructive
-            ) { [weak self] _ in
-                self?.deleteHistoryItem(at: indexPath)
-            }
-            
-            return UIMenu(title: "", children: [deleteAction])
+    private func showDeleteMenu(for indexPath: IndexPath) {
+        let alert = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        let deleteAction = UIAlertAction(
+            title: "Удалить",
+            style: .destructive
+        ) { [weak self] _ in
+            self?.deleteHistoryItem(at: indexPath)
         }
+        
+        let cancelAction = UIAlertAction(title: "Отмена", style: .cancel, handler: nil)
+        
+        alert.addAction(deleteAction)
+        alert.addAction(cancelAction)
+        
+        if let cell = tableView.cellForRow(at: indexPath) {
+            alert.popoverPresentationController?.sourceView = cell
+            alert.popoverPresentationController?.sourceRect = cell.bounds
+        }
+        
+        present(alert, animated: true, completion: nil)
     }
 }
 
